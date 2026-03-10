@@ -1,21 +1,14 @@
 // lib.typ
 // Public API entry point for typst-erd.
 
-#import "@preview/cetz:0.3.0": canvas
+#import "@preview/cetz:0.4.2": canvas
 #import "src/entity.typ":       entity       as _entity
 #import "src/relationship.typ": relationship as _relationship
 #import "src/attribute.typ":    attribute    as _attribute
 #import "src/connector.typ":    connector    as _connector, cardinality-label
 #import "src/styles.typ":       default-theme, erd-theme
 
-// ── Internal theme state ───────────────────────────────────────────────────────
-// Used by `erd()` to propagate the active theme to all child element functions
-// without requiring users to pass `theme:` on every call.
-#let _erd-active-theme = state("_erd-active-theme", default-theme)
-
 // ── Public element functions ───────────────────────────────────────────────────
-// Each function reads the active theme from state via `context` so that the
-// theme set in `erd(theme: …)` flows through automatically.
 
 /// Draws a named entity box with a filled header and attribute rows.
 ///
@@ -26,6 +19,7 @@
 ///   - width (float):       Box width in CeTZ units. Default: 3.
 ///   - key (string):        Optional CeTZ anchor key. Defaults to `name`.
 ///   - style (dictionary):  Per-element style overrides merged over the active theme.
+///   - theme (dictionary):  Theme used for this element. Defaults to `default-theme`.
 ///
 /// Anchors created: "center", "north", "south", "east", "west".
 #let entity(
@@ -35,14 +29,15 @@
   width:      3,
   key:        none,
   style:      (:),
-) = context _entity(
+  theme:      default-theme,
+) = _entity(
   name,
   pos,
   attributes: attributes,
   width:      width,
   key:        key,
   style:      style,
-  theme:      _erd-active-theme.get(),
+  theme:      theme,
 )
 
 /// Draws a relationship diamond.
@@ -52,6 +47,7 @@
 ///   - pos (array):         (x, y) CeTZ coordinate for the diamond centre.
 ///   - identifying (bool):  If true, draws a double-bordered (inner) diamond.
 ///   - style (dictionary):  Per-element style overrides merged over the active theme.
+///   - theme (dictionary):  Theme used for this element. Defaults to `default-theme`.
 ///
 /// Anchors created: "center", "north", "south", "east", "west".
 #let relationship(
@@ -59,12 +55,13 @@
   pos,
   identifying: false,
   style:       (:),
-) = context _relationship(
+  theme:       default-theme,
+) = _relationship(
   name,
   pos,
   identifying: identifying,
   style:       style,
-  theme:       _erd-active-theme.get(),
+  theme:       theme,
 )
 
 /// Draws an attribute ellipse connected to a parent entity or relationship.
@@ -77,6 +74,7 @@
 ///   - multivalued (bool):    Double border for multivalued attributes. Default: false.
 ///   - primary-key (bool):    Underlines the label (PK attribute). Default: false.
 ///   - style (dictionary):    Per-element style overrides merged over the active theme.
+///   - theme (dictionary):    Theme used for this element. Defaults to `default-theme`.
 ///
 /// Anchors created: "center", "north", "south", "east", "west".
 #let attribute(
@@ -87,7 +85,8 @@
   multivalued: false,
   primary-key: false,
   style:       (:),
-) = context _attribute(
+  theme:       default-theme,
+) = _attribute(
   name,
   pos,
   entity-key:  entity-key,
@@ -95,7 +94,7 @@
   multivalued: multivalued,
   primary-key: primary-key,
   style:       style,
-  theme:       _erd-active-theme.get(),
+  theme:       theme,
 )
 
 /// Draws a line between two ERD elements with optional cardinality notation.
@@ -109,6 +108,7 @@
 ///   - from-anchor (string):   Override source anchor. Default: "center".
 ///   - to-anchor (string):     Override target anchor. Default: "center".
 ///   - style (dictionary):     Per-element style overrides merged over the active theme.
+///   - theme (dictionary):     Theme used for this element. Defaults to `default-theme`.
 #let connector(
   from,
   to,
@@ -118,7 +118,8 @@
   from-anchor: none,
   to-anchor:   none,
   style:       (:),
-) = context _connector(
+  theme:       default-theme,
+) = _connector(
   from,
   to,
   label:       label,
@@ -127,7 +128,7 @@
   from-anchor: from-anchor,
   to-anchor:   to-anchor,
   style:       style,
-  theme:       _erd-active-theme.get(),
+  theme:       theme,
 )
 
 // ── Main canvas wrapper ────────────────────────────────────────────────────────
@@ -136,19 +137,17 @@
 /// All ERD elements must be placed inside this function.
 ///
 /// Parameters:
-///   - theme (dictionary): Visual style overrides. Defaults to `default-theme`.
 ///   - width (length):     Canvas width. Default: 100%.
 ///   - body (content):     CeTZ draw calls produced by entity(), relationship(), etc.
 ///
 /// Example:
-///   #erd[
-///     #entity("User", (0,0), attributes: ("id [PK]", "name", "email"))
-///     #entity("Order", (6,0), attributes: ("id [PK]", "date", "total"))
-///     #relationship("places", (3, 0))
-///     #connector("User", "places", label: "1")
-///     #connector("places", "Order", label: "N")
-///   ]
-#let erd(theme: default-theme, width: 100%, body) = {
-  _erd-active-theme.update(theme)
+///   #erd({
+///     entity("User", (0,0), attributes: ("id [PK]", "name", "email"))
+///     entity("Order", (6,0), attributes: ("id [PK]", "date", "total"))
+///     relationship("places", (3, 0))
+///     connector("User", "places", label: "1")
+///     connector("places", "Order", label: "N")
+///   })
+#let erd(width: 100%, body) = {
   block(width: width, canvas(length: 1cm, body))
 }

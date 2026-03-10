@@ -8,7 +8,7 @@ description = "Entity-Relationship Diagram (ERD) drawing package for Typst, powe
 repository = "https://github.com/yourname/typst-erd"
 keywords = ["erd", "diagram", "database", "cetz", "visualization"]
 categories = ["visualization"]
-compiler = ">=0.11.0"
+compiler = ">=0.13.1"
 
 [dependencies]
-cetz = ">=0.3.0"
+cetz = ">=0.4.2"

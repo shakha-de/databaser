@@ -1,7 +1,7 @@
 // src/relationship.typ
 // Relationship (diamond) rendering for typst-erd.
 
-#import "@preview/cetz:0.3.0": draw
+#import "@preview/cetz:0.4.2": draw
 #import "styles.typ": default-theme
 #import "utils.typ": resolve-style
 

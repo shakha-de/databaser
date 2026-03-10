@@ -28,13 +28,13 @@ Or use the preview registry import:
 ```typst
 #import "@preview/typst-erd:0.1.0": *
 
-#erd[
-  #entity("Person", (0, 0), attributes: ("PersonID [PK]", "Name", "Age"))
-  #entity("Job",    (6, 0), attributes: ("JobID [PK]", "Title"))
-  #relationship("has", (3, 0))
-  #connector("Person", "has",  label: "1")
-  #connector("has",    "Job",  label: "N")
-]
+#erd({
+  entity("Person", (0, 0), attributes: ("PersonID [PK]", "Name", "Age"))
+  entity("Job",    (6, 0), attributes: ("JobID [PK]", "Title"))
+  relationship("has", (3, 0))
+  connector("Person", "has",  label: "1")
+  connector("has",    "Job",  label: "N")
+})
 ```
 
 ---
@@ -46,24 +46,24 @@ Or use the preview registry import:
 ```typst
 #import "@preview/typst-erd:0.1.0": *
 
-#erd[
-  #entity("Customer", (0, 0),
+#erd({
+  entity("Customer", (0, 0),
     attributes: ("CustomerID [PK]", "Name", "Email", "Phone"))
 
-  #entity("Order", (7, 0),
+  entity("Order", (7, 0),
     attributes: ("OrderID [PK]", "OrderDate", "TotalAmount"))
 
-  #relationship("places", (3.5, 0))
+  relationship("places", (3.5, 0))
 
-  #connector("Customer", "places", label: "1")
-  #connector("places", "Order",    label: "N")
+  connector("Customer", "places", label: "1")
+  connector("places", "Order",    label: "N")
 
-  #attribute("DateOfBirth", (0, -3.5),
+  attribute("DateOfBirth", (0, -3.5),
     entity-key: "Customer", derived: true)
 
-  #attribute("Phones", (0, 3.5),
+  attribute("Phones", (0, 3.5),
     entity-key: "Customer", multivalued: true)
-]
+})
 ```
 
 ### Example 2 — Many-to-Many with Crow's Foot notation
@@ -71,21 +71,21 @@ Or use the preview registry import:
 ```typst
 #import "@preview/typst-erd:0.1.0": *
 
-#erd(width: 140mm)[
-  #entity("Student", (0, 0),
+#erd(width: 140mm, {
+  entity("Student", (0, 0),
     attributes: ("StudentID [PK]", "Name", "GPA"))
 
-  #entity("Course", (8, 0),
+  entity("Course", (8, 0),
     attributes: ("CourseID [PK]", "Title", "Credits"))
 
-  #relationship("enrolls", (4, 0), identifying: false)
+  relationship("enrolls", (4, 0), identifying: false)
 
-  #connector("Student", "enrolls", label: "0..N", notation: "crow")
-  #connector("enrolls", "Course",  label: "0..N", notation: "crow")
+  connector("Student", "enrolls", label: "0..N", notation: "crow")
+  connector("enrolls", "Course",  label: "0..N", notation: "crow")
 
-  #attribute("Grade",      (4, -2.5), entity-key: "enrolls")
-  #attribute("EnrollDate", (4,  2.5), entity-key: "enrolls")
-]
+  attribute("Grade",      (4, -2.5), entity-key: "enrolls")
+  attribute("EnrollDate", (4,  2.5), entity-key: "enrolls")
+})
 ```
 
 ### Example 3 — Custom Theme
@@ -98,30 +98,31 @@ Or use the preview registry import:
   relationship: (fill: yellow.lighten(70%), stroke: 1.5pt + yellow.darken(30%)),
 )
 
-#erd(theme: my-theme)[
-  #entity("Product", (0, 0),
-    attributes: ("ProductID [PK]", "Name", "Price", "Stock"))
-  #entity("Category", (7, 0),
-    attributes: ("CategoryID [PK]", "CategoryName"))
-  #relationship("belongs_to", (3.5, 0))
-  #connector("Product",      "belongs_to", label: "N")
-  #connector("belongs_to",   "Category",   label: "1")
-]
+#erd({
+  entity("Product", (0, 0),
+    attributes: ("ProductID [PK]", "Name", "Price", "Stock"),
+    theme: my-theme)
+  entity("Category", (7, 0),
+    attributes: ("CategoryID [PK]", "CategoryName"),
+    theme: my-theme)
+  relationship("belongs_to", (3.5, 0), theme: my-theme)
+  connector("Product",      "belongs_to", label: "N", theme: my-theme)
+  connector("belongs_to",   "Category",   label: "1", theme: my-theme)
+})
 ```
 
 ---
 
 ## API Reference
 
-### `erd(theme, width, body)`
+### `erd(width, body)`
 
-Main canvas wrapper. All ERD elements must be placed inside this function.
+Main canvas wrapper. All ERD elements must be placed inside this function with a code block body, for example `#erd({ ... })`.
 
-| Parameter | Type       | Default         | Description                              |
-|-----------|------------|-----------------|------------------------------------------|
-| `theme`   | dictionary | `default-theme` | Visual style. Use `erd-theme()` to build.|
-| `width`   | length     | `100%`          | Canvas width.                            |
-| `body`    | content    | —               | Draw calls from `entity()`, `connector()`, etc. |
+| Parameter | Type       | Default | Description                              |
+|-----------|------------|---------|------------------------------------------|
+| `width`   | length     | `100%`  | Canvas width.                            |
+| `body`    | content    | —       | Draw calls from `entity()`, `connector()`, etc. |
 
 ---
 
@@ -137,6 +138,7 @@ Draws a named entity box with a filled header and attribute rows.
 | `width`      | float      | `3`     | Box width in CeTZ units (cm by default).       |
 | `key`        | string     | `none`  | Anchor key; defaults to `name`.                |
 | `style`      | dictionary | `(:)`   | Per-element style overrides.                   |
+| `theme`      | dictionary | `default-theme` | Theme used for this element.         |
 
 **Anchors created:** `<key>.center`, `<key>.north`, `<key>.south`, `<key>.east`, `<key>.west`
 
@@ -152,6 +154,7 @@ Draws a relationship diamond.
 | `pos`         | array      | —       | `(x, y)` centre coordinate.               |
 | `identifying` | bool       | `false` | Double-bordered diamond if `true`.        |
 | `style`       | dictionary | `(:)`   | Per-element style overrides.              |
+| `theme`       | dictionary | `default-theme` | Theme used for this element.       |
 
 **Anchors created:** `<name>.center`, `<name>.north`, `<name>.south`, `<name>.east`, `<name>.west`
 
@@ -170,6 +173,7 @@ Draws an attribute ellipse with an optional connecting line to a parent element.
 | `multivalued` | bool       | `false` | Double border for multivalued attributes.             |
 | `primary-key` | bool       | `false` | Underlined label for primary-key attributes.          |
 | `style`       | dictionary | `(:)`   | Per-element style overrides.                          |
+| `theme`       | dictionary | `default-theme` | Theme used for this element.               |
 
 ---
 
@@ -187,6 +191,7 @@ Draws a line between two ERD elements with optional cardinality notation.
 | `from-anchor` | string     | `none`   | Override source anchor (e.g. `"east"`).                |
 | `to-anchor`   | string     | `none`   | Override target anchor.                                |
 | `style`       | dictionary | `(:)`    | Per-element style overrides.                           |
+| `theme`       | dictionary | `default-theme` | Theme used for this element.                |
 
 ---
 
