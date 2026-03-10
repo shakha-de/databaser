@@ -1,0 +1,14 @@
+[package]
+name = "typst-erd"
+version = "0.1.0"
+entrypoint = "lib.typ"
+authors = ["Your Name"]
+license = "MIT"
+description = "Entity-Relationship Diagram (ERD) drawing package for Typst, powered by CeTZ."
+repository = "https://github.com/yourname/typst-erd"
+keywords = ["erd", "diagram", "database", "cetz", "visualization"]
+categories = ["visualization"]
+compiler = ">=0.11.0"
+
+[dependencies]
+cetz = ">=0.3.0"
