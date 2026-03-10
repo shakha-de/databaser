@@ -39,6 +39,23 @@
     label-size:   0.32,
     label-fill:   rgb("#e74c3c"),
     label-weight: "bold",
+    label-text-fill: white,       // text color in label box
+    label-box-inset: 2pt,         // padding inside label box
+    label-box-radius: 2pt,        // corner radius of label box
+    label-auto-position: true,    // auto-adjust position to avoid notation overlap
+    crow: (                       // crow's foot notation parameters
+      fork-depth: 0.25,
+      spread: 0.18,
+      bar-offset: 0.35,
+    ),
+    uml: (                        // UML notation parameters
+      depth: 0.22,
+      spread: 0.12,
+    ),
+    ebnf: (                       // EBNF notation parameters
+      endpoint-offset: 0.15,
+      font-size: 0.25,
+    ),
   ),
 )
 

@@ -57,12 +57,35 @@
 
 #erd({
   entity("Product", (0, 0),
-    attributes: ("ProductID [PK]", "Name", "Price", "Stock"),
+    attributes: ("ProductID [PK]", "Name", "Price"),
     theme: my-theme)
-  entity("Category", (7, 0),
-    attributes: ("CategoryID [PK]", "CategoryName"),
+
+  entity("Category", (6, 0),
+    attributes: ("CategoryID [PK]", "Name"),
     theme: my-theme)
-  relationship("belongs_to", (3.5, 0), theme: my-theme)
-  connector("Product",    "belongs_to", label: "N", theme: my-theme)
-  connector("belongs_to", "Category",   label: "1", theme: my-theme)
+
+  relationship("belongs_to", (3, 0), theme: my-theme)
+
+  connector("Product", "belongs_to", label: "N", theme: my-theme)
+  connector("belongs_to", "Category", label: "1", theme: my-theme)
+})
+
+== Example 4 — EBNF Cardinality Notation
+
+#erd(width: 140mm, {
+  entity("Product", (0, 0),
+    attributes: ("ProductID [PK]", "Name", "Price", "Stock"))
+
+  entity("OrderItem", (7, 0),
+    attributes: ("OrderItemID [PK]", "Quantity", "UnitPrice"))
+
+  relationship("contains", (3.5, 0))
+
+  connector("Product", "contains", notation: "ebnf",
+    from-cardinality: (min: 1, max: 1),
+    to-cardinality: (min: 1, max: "*"))
+
+  connector("contains", "OrderItem", notation: "ebnf",
+    from-cardinality: (min: 1, max: "*"),
+    to-cardinality: (min: 0, max: "*"))
 })

@@ -100,35 +100,52 @@
 /// Draws a line between two ERD elements with optional cardinality notation.
 ///
 /// Parameters:
-///   - from (string):          Source element key.
-///   - to (string):            Target element key.
-///   - label (string):         Cardinality label ("1", "N", "M", "0..1", etc.).
-///   - label-pos (float):      0.0–1.0 position along the line. Default: 0.85.
-///   - notation (string):      "crow" | "chen" | "uml". Default: "chen".
-///   - from-anchor (string):   Override source anchor. Default: "center".
-///   - to-anchor (string):     Override target anchor. Default: "center".
-///   - style (dictionary):     Per-element style overrides merged over the active theme.
-///   - theme (dictionary):     Theme used for this element. Defaults to `default-theme`.
+///   - from (string):            Source element key.
+///   - to (string):              Target element key.
+///   - label (string):           Cardinality label ("1", "N", "M", "0..1", etc.). Default: none.
+///   - label-pos (float):        0.0–1.0 position along the line. Default: 0.85.
+///   - notation (string):        "chen" | "crow" | "uml" | "ebnf". Default: "chen".
+///                               - chen: plain line with optional text label
+///                               - crow: crow's foot notation (database standard)
+///                               - uml: open arrowhead notation
+///                               - ebnf: bracketed cardinality ranges [m..n] at both endpoints
+///   - from-anchor (string):     Override source anchor. Default: "center".
+///   - to-anchor (string):       Override target anchor. Default: "center".
+///   - from-cardinality (dict):  For EBNF notation: (min: 0|1|"*", max: 0|1|"*"|number).
+///   - to-cardinality (dict):    For EBNF notation: (min: 0|1|"*", max: 0|1|"*"|number).
+///   - style (dictionary):       Per-element style overrides merged over the active theme.
+///   - theme (dictionary):       Theme used for this element. Defaults to `default-theme`.
+///
+/// Example:
+///   #connector("Customer", "Order", label: "1", notation: "chen")
+///   #connector("Student", "Course", notation: "crow", label: "0..N")
+///   #connector("Product", "Category", notation: "ebnf",
+///     from-cardinality: (min: 1, max: 1),
+///     to-cardinality: (min: 0, max: "*"))
 #let connector(
   from,
   to,
-  label:       none,
-  label-pos:   0.85,
-  notation:    "chen",
-  from-anchor: none,
-  to-anchor:   none,
-  style:       (:),
-  theme:       default-theme,
+  label:            none,
+  label-pos:        0.85,
+  notation:         "chen",
+  from-anchor:      none,
+  to-anchor:        none,
+  from-cardinality: none,
+  to-cardinality:   none,
+  style:            (:),
+  theme:            default-theme,
 ) = _connector(
   from,
   to,
-  label:       label,
-  label-pos:   label-pos,
-  notation:    notation,
-  from-anchor: from-anchor,
-  to-anchor:   to-anchor,
-  style:       style,
-  theme:       theme,
+  label:            label,
+  label-pos:        label-pos,
+  notation:         notation,
+  from-anchor:      from-anchor,
+  to-anchor:        to-anchor,
+  from-cardinality: from-cardinality,
+  to-cardinality:   to-cardinality,
+  style:            style,
+  theme:            theme,
 )
 
 // ── Main canvas wrapper ────────────────────────────────────────────────────────
