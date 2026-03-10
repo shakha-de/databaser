@@ -80,7 +80,7 @@
       (right, header-top),
       fill:   s.header-fill,
       stroke: s.stroke,
-      radius: s.radius,
+      radius: (top-left: s.radius, top-right: s.radius, bottom-left: 0, bottom-right: 0),
     )
 
     // Header label.

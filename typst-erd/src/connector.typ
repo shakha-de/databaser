@@ -3,7 +3,7 @@
 
 #import "@preview/cetz:0.4.2": draw, coordinate as cetz-coord
 #import "styles.typ": default-theme
-#import "utils.typ": resolve-style, clamp
+#import "utils.typ": resolve-style, clamp, auto-anchor
 
 // ── Internal helpers ───────────────────────────────────────────────────────────
 
@@ -140,40 +140,60 @@
 
   let s = resolve-style(theme, "connector", style)
 
-  let src-anchor = if from-anchor != none { from-anchor } else { "center" }
-  let dst-anchor = if to-anchor   != none { to-anchor   } else { "center" }
+  // Capture user-supplied overrides before entering draw.get-ctx.
+  let explicit-src = from-anchor
+  let explicit-dst = to-anchor
 
-  let src = from + "." + src-anchor
-  let dst = to   + "." + dst-anchor
+  draw.get-ctx(ctx => {
+    // ── Resolve source anchor ───────────────────────────────────────────
+    let src-anchor = if explicit-src != none {
+      explicit-src
+    } else {
+      let (_, fp) = cetz-coord.resolve(ctx, from + ".center")
+      let (_, tp) = cetz-coord.resolve(ctx, to   + ".center")
+      auto-anchor(fp, tp)
+    }
 
-  // ── Main line ───────────────────────────────────────────────────────────
-  draw.line(src, dst, stroke: s.stroke)
+    // ── Resolve destination anchor ──────────────────────────────────────
+    let dst-anchor = if explicit-dst != none {
+      explicit-dst
+    } else {
+      let (_, fp) = cetz-coord.resolve(ctx, from + ".center")
+      let (_, tp) = cetz-coord.resolve(ctx, to   + ".center")
+      auto-anchor(tp, fp)
+    }
 
-  // ── Notation marks at the destination end ───────────────────────────────
-  if notation == "crow" {
-    _crow-foot(src, dst, s.stroke)
-  } else if notation == "uml" {
-    _uml-arrow(src, dst, s.stroke)
-  }
+    let src = from + "." + src-anchor
+    let dst = to   + "." + dst-anchor
 
-  // ── Cardinality label ───────────────────────────────────────────────────
-  if label != none {
-    let lp = clamp(label-pos, 0.0, 1.0)
-    // CeTZ linear interpolation expression: (from, t, to)
-    draw.content(
-      (src, lp, dst),
-      box(
-        fill:   s.label-fill,
-        inset:  2pt,
-        radius: 2pt,
-        text(
-          weight: s.label-weight,
-          size:   s.label-size * 1em,
-          fill:   white,
-          label,
+    // ── Main line ─────────────────────────────────────────────────────────
+    draw.line(src, dst, stroke: s.stroke)
+
+    // ── Notation marks at the destination end ────────────────────────────
+    if notation == "crow" {
+      _crow-foot(src, dst, s.stroke)
+    } else if notation == "uml" {
+      _uml-arrow(src, dst, s.stroke)
+    }
+
+    // ── Cardinality label ─────────────────────────────────────────────────
+    if label != none {
+      let lp = clamp(label-pos, 0.0, 1.0)
+      draw.content(
+        (src, lp, dst),
+        box(
+          fill:   s.label-fill,
+          inset:  2pt,
+          radius: 2pt,
+          text(
+            weight: s.label-weight,
+            size:   s.label-size * 1em,
+            fill:   white,
+            label,
+          ),
         ),
-      ),
-      anchor: "center",
-    )
-  }
+        anchor: "center",
+      )
+    }
+  })
 }

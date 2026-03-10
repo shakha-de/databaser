@@ -1,9 +1,9 @@
 // src/attribute.typ
 // Attribute (ellipse) rendering for typst-erd.
 
-#import "@preview/cetz:0.4.2": draw
+#import "@preview/cetz:0.4.2": draw, coordinate as cetz-coord
 #import "styles.typ": default-theme
-#import "utils.typ": resolve-style
+#import "utils.typ": resolve-style, auto-anchor
 
 /// Draws an attribute ellipse connected to a parent entity or relationship.
 ///
@@ -41,14 +41,18 @@
   }
 
   // Draw connecting line to parent element first (behind the ellipse).
-  // We use `pos` directly (not the anchor name) since the group doesn't
-  // exist yet at this point in the draw sequence.
+  // Resolve the parent's facing edge anchor so the line stops at its border,
+  // not through its centre.
   if entity-key != none {
-    draw.line(
-      pos,
-      (entity-key + ".center"),
-      stroke: theme.connector.stroke,
-    )
+    draw.get-ctx(ctx => {
+      let (_, parent-center) = cetz-coord.resolve(ctx, entity-key + ".center")
+      let dir = auto-anchor(parent-center, pos)
+      draw.line(
+        pos,
+        entity-key + "." + dir,
+        stroke: theme.connector.stroke,
+      )
+    })
   }
 
   draw.group(name: name, {
