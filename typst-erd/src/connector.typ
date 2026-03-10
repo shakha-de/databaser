@@ -1,7 +1,7 @@
 // src/connector.typ
 // Line / arrow connection logic for typst-erd.
 
-#import "@preview/cetz:0.3.0": draw, coordinate as cetz-coord
+#import "@preview/cetz:0.4.2": draw, coordinate as cetz-coord
 #import "styles.typ": default-theme
 #import "utils.typ": resolve-style, clamp
 
@@ -11,8 +11,8 @@
 /// Uses draw.get-ctx to resolve actual coordinates at render time.
 #let _crow-foot(src-anchor, dst-anchor, stroke-style) = {
   draw.get-ctx(ctx => {
-    let to-pt   = cetz-coord.resolve(ctx, dst-anchor)
-    let from-pt = cetz-coord.resolve(ctx, src-anchor)
+    let (_, to-pt)   = cetz-coord.resolve(ctx, dst-anchor)
+    let (_, from-pt) = cetz-coord.resolve(ctx, src-anchor)
 
     let dx = to-pt.at(0) - from-pt.at(0)
     let dy = to-pt.at(1) - from-pt.at(1)
@@ -54,8 +54,8 @@
 /// Uses draw.get-ctx to resolve actual coordinates at render time.
 #let _uml-arrow(src-anchor, dst-anchor, stroke-style) = {
   draw.get-ctx(ctx => {
-    let to-pt   = cetz-coord.resolve(ctx, dst-anchor)
-    let from-pt = cetz-coord.resolve(ctx, src-anchor)
+    let (_, to-pt)   = cetz-coord.resolve(ctx, dst-anchor)
+    let (_, from-pt) = cetz-coord.resolve(ctx, src-anchor)
 
     let dx = to-pt.at(0) - from-pt.at(0)
     let dy = to-pt.at(1) - from-pt.at(1)
