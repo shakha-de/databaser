@@ -98,7 +98,7 @@ Or use the preview registry import:
   relationship: (fill: yellow.lighten(70%), stroke: 1.5pt + yellow.darken(30%)),
 )
 
-#erd(theme: my-theme, {
+#erd({
   entity("Product", (0, 0),
     attributes: ("ProductID [PK]", "Name", "Price", "Stock"),
     theme: my-theme)
@@ -115,15 +115,14 @@ Or use the preview registry import:
 
 ## API Reference
 
-### `erd(theme, width, body)`
+### `erd(width, body)`
 
 Main canvas wrapper. All ERD elements must be placed inside this function with a code block body, for example `#erd({ ... })`.
 
-| Parameter | Type       | Default         | Description                              |
-|-----------|------------|-----------------|------------------------------------------|
-| `theme`   | dictionary | `default-theme` | Visual style. Use `erd-theme()` to build.|
-| `width`   | length     | `100%`          | Canvas width.                            |
-| `body`    | content    | —               | Draw calls from `entity()`, `connector()`, etc. |
+| Parameter | Type       | Default | Description                              |
+|-----------|------------|---------|------------------------------------------|
+| `width`   | length     | `100%`  | Canvas width.                            |
+| `body`    | content    | —       | Draw calls from `entity()`, `connector()`, etc. |
 
 ---
 

@@ -137,7 +137,6 @@
 /// All ERD elements must be placed inside this function.
 ///
 /// Parameters:
-///   - theme (dictionary): Visual style overrides. Defaults to `default-theme`.
 ///   - width (length):     Canvas width. Default: 100%.
 ///   - body (content):     CeTZ draw calls produced by entity(), relationship(), etc.
 ///
@@ -149,6 +148,6 @@
 ///     connector("User", "places", label: "1")
 ///     connector("places", "Order", label: "N")
 ///   })
-#let erd(theme: default-theme, width: 100%, body) = {
+#let erd(width: 100%, body) = {
   block(width: width, canvas(length: 1cm, body))
 }

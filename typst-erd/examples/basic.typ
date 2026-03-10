@@ -55,7 +55,7 @@
   relationship: (fill: yellow.lighten(70%), stroke: 1.5pt + yellow.darken(30%)),
 )
 
-#erd(theme: my-theme, {
+#erd({
   entity("Product", (0, 0),
     attributes: ("ProductID [PK]", "Name", "Price", "Stock"),
     theme: my-theme)
